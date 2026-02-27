@@ -1,33 +1,57 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import {
     DrawerContentScrollView,
     DrawerItemList,
     DrawerContentComponentProps,
     DrawerItem,
+    DrawerNavigationProp,
 } from "@react-navigation/drawer";
 import { AntDesign } from "@expo/vector-icons";
+import { useAuth } from "../screens/auth/AuthContext";
+import { RootDrawerParamList } from "../navigation/type/types";
 
 export default function CustomDrawerContent(props: DrawerContentComponentProps) {
+    const { signOut } = useAuth();
+
+    type Nav = DrawerNavigationProp<RootDrawerParamList, "MainStack">;
+    const nav = props.navigation as unknown as Nav;
+
+    const go = (screen: any, params?: any) => {
+        nav.navigate("MainStack", { screen, params });
+        nav.closeDrawer();
+    };
+
+    const handleLogout = async () => {
+        nav.closeDrawer();
+        nav.navigate("MainStack", { screen: "Profile" });
+        await signOut();
+    };
+
     return (
-        <DrawerContentScrollView {...props} contentContainerStyle={styles.scroll}>
+        <DrawerContentScrollView
+            {...props}
+            contentContainerStyle={styles.scroll}
+            showsVerticalScrollIndicator={false}
+        >
             {/* Header */}
             <View style={styles.header}>
-                <View style={styles.avatarWrap}>
-                    <Image
-                        source={{
-                            uri: "https://cdn0.expertoanimal.com/es/razas/9/0/5/rana-arboricola-verde_509_0_600.webp",
-                        }}
-                        style={styles.avatar}
-                    />
-                </View>
+                <View style={styles.brandRow}>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.name}>Tienda Trigo</Text>
+                        <Text style={styles.sub}>FakeStore · Expo</Text>
+                    </View>
 
-                <Text style={styles.name}>Rodrigo Maximo Trigo</Text>
-                <Text style={styles.email}>rtrigom@outlook.com</Text>
+                    <View style={styles.badge}>
+                        <Text style={styles.badgeText}>v1</Text>
+                    </View>
+                </View>
             </View>
 
+            {/* Main items */}
             <View style={styles.items}>
                 <DrawerItemList {...props} />
+
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Más</Text>
 
@@ -37,12 +61,12 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
                         icon={({ size, color }) => (
                             <AntDesign name="search" size={size} color={color} />
                         )}
-                        onPress={() => {
-                            props.navigation.navigate("MainStack", { screen: "Search" } as never);
-                            props.navigation.closeDrawer();
-                        }}
+                        onPress={() => go("Search")}
                         inactiveTintColor="#6B7280"
                         activeTintColor="#111827"
+                        inactiveBackgroundColor="transparent"
+                        activeBackgroundColor="#F3F4F6"
+                        style={styles.drawerItem}
                     />
 
                     <DrawerItem
@@ -51,15 +75,12 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
                         icon={({ size, color }) => (
                             <AntDesign name="profile" size={size} color={color} />
                         )}
-                        onPress={() => {
-                            props.navigation.navigate(
-                                "MainStack",
-                                { screen: "Details", params: { from: "drawer" } } as never
-                            );
-                            props.navigation.closeDrawer();
-                        }}
+                        onPress={() => go("Details", { from: "drawer" })}
                         inactiveTintColor="#6B7280"
                         activeTintColor="#111827"
+                        inactiveBackgroundColor="transparent"
+                        activeBackgroundColor="#F3F4F6"
+                        style={styles.drawerItem}
                     />
 
                     <DrawerItem
@@ -68,24 +89,24 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
                         icon={({ size, color }) => (
                             <AntDesign name="info-circle" size={size} color={color} />
                         )}
-                        onPress={() => {
-                            props.navigation.navigate("MainStack", { screen: "About" } as never);
-                            props.navigation.closeDrawer();
-                        }}
+                        onPress={() => go("About")}
                         inactiveTintColor="#6B7280"
                         activeTintColor="#111827"
+                        inactiveBackgroundColor="transparent"
+                        activeBackgroundColor="#F3F4F6"
+                        style={styles.drawerItem}
                     />
-
                 </View>
             </View>
 
             {/* Footer */}
             <View style={styles.footer}>
                 <TouchableOpacity
-                    onPress={() => props.navigation.closeDrawer()}
+                    onPress={handleLogout}
                     activeOpacity={0.9}
                     style={styles.logoutBtn}
                 >
+                    <AntDesign name="logout" size={16} color="#7F1D1D" />
                     <Text style={styles.logoutText}>Cerrar sesión</Text>
                 </TouchableOpacity>
 
@@ -97,58 +118,77 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
 
 const styles = StyleSheet.create({
     scroll: { flexGrow: 1, backgroundColor: "#FFFFFF" },
+
     header: {
-        paddingHorizontal: 24,
-        paddingTop: 15,
-        paddingBottom: 16,
+        paddingHorizontal: 18,
+        paddingTop: 14,
+        paddingBottom: 14,
         borderBottomWidth: 1,
         borderBottomColor: "#E5E7EB",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#FAFAFA",
     },
-    avatarWrap: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        borderWidth: 1,
-        borderColor: "#E5E7EB",
-        justifyContent: "center",
+
+    brandRow: {
+        flexDirection: "row",
         alignItems: "center",
-        marginBottom: 12,
-        overflow: "hidden",
+        gap: 12,
     },
-    avatar: { width: 56, height: 56 },
     name: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: "900",
         color: "#111827",
-        lineHeight: 22,
+        lineHeight: 20,
     },
-    email: {
-        marginTop: 4,
-        fontSize: 13,
+
+    sub: {
+        marginTop: 2,
+        fontSize: 12,
         fontWeight: "600",
         color: "#6B7280",
     },
+
+    badge: {
+        paddingHorizontal: 10,
+        paddingVertical: 6,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: "#E5E7EB",
+        backgroundColor: "#FFFFFF",
+    },
+    badgeText: {
+        fontSize: 12,
+        fontWeight: "800",
+        color: "#374151",
+    },
+
     items: {
         flex: 1,
         paddingTop: 8,
-        paddingHorizontal: 8,
+        paddingHorizontal: 10,
     },
 
     section: {
-        marginTop: 8,
-        paddingTop: 8,
+        marginTop: 10,
+        paddingTop: 10,
         borderTopWidth: 1,
         borderTopColor: "#E5E7EB",
     },
+
     sectionTitle: {
-        paddingHorizontal: 16,
-        paddingBottom: 6,
+        paddingHorizontal: 10,
+        paddingBottom: 8,
         fontSize: 12,
         fontWeight: "800",
         color: "#9CA3AF",
         letterSpacing: 1,
+        textTransform: "uppercase",
     },
+
+    drawerItem: {
+        borderRadius: 12,
+        marginVertical: 2,
+    },
+
     itemLabel: {
         fontWeight: "800",
     },
@@ -157,17 +197,27 @@ const styles = StyleSheet.create({
         padding: 16,
         borderTopWidth: 1,
         borderTopColor: "#E5E7EB",
+        backgroundColor: "#FFFFFF",
     },
+
     logoutBtn: {
         height: 46,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: "#E5E7EB",
+        borderColor: "#FCA5A5",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#FEF2F2",
+        flexDirection: "row",
+        gap: 10,
     },
-    logoutText: { color: "#111827", fontSize: 14, fontWeight: "800" },
+
+    logoutText: {
+        color: "#7F1D1D",
+        fontSize: 14,
+        fontWeight: "900",
+    },
+
     footerHint: {
         marginTop: 10,
         textAlign: "center",
