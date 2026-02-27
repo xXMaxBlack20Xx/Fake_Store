@@ -12,6 +12,7 @@ export type MainStackParamList = {
     Search: undefined;
     Details: undefined;
     About: undefined;
+    Checkout: undefined;
     // Para que pueda navegar a Profile desde el Drawer (si Profile no está dentro de HomeTabs):
     Profile: undefined;
 };

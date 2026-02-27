@@ -1,11 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet, FlatList, Image, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../../components/CartContext";
 import { useAuth } from "../auth/AuthContext";
 
-
 export default function Cart() {
+    const navigation = useNavigation<any>(); // quick + safe fix (you can strongly type later)
     const { items, totalPrice, setQty, removeItem, clear } = useCart();
     const { isAuthenticated } = useAuth();
 
@@ -33,7 +34,7 @@ export default function Cart() {
                 <FlatList
                     data={items}
                     keyExtractor={(it) => String(it.product.id)}
-                    contentContainerStyle={{ paddingBottom: 120 }}
+                    contentContainerStyle={{ paddingBottom: 140 }}
                     renderItem={({ item }) => (
                         <View style={styles.row}>
                             <Image source={{ uri: item.product.image }} style={styles.image} />
@@ -85,8 +86,8 @@ export default function Cart() {
 
                     <Pressable
                         onPress={() => {
-                            if (!isAuthenticated) navigation.navigate("Login");
-                            else navigation.navigate("Checkout");
+                            // You said Profile controls login, so send unauth users there
+                            navigation.navigate(isAuthenticated ? "Checkout" : "Profile");
                         }}
                         style={styles.checkoutBtn}
                     >

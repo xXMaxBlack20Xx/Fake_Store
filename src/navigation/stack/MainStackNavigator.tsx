@@ -6,6 +6,7 @@ import { HomeTabsNavigator } from "../tabs/HomeTabsNavigator";
 import Details from "../../screens/drawer/Details";
 import About from "../../screens/drawer/About";
 import Search from "../../screens/drawer/Search";
+import Checkout from "../../screens/tabs/Checkout";
 
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
@@ -27,6 +28,8 @@ export function MainStackNavigator() {
                 component={Search}
                 options={{ title: "Buscar" }}
             />
+
+            <Stack.Screen name="Checkout" component={Checkout} />
 
             <Stack.Screen
                 name="Details"

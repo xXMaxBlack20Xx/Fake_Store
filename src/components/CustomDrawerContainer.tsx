@@ -9,7 +9,7 @@ import {
 } from "@react-navigation/drawer";
 import { AntDesign } from "@expo/vector-icons";
 import { useAuth } from "../screens/auth/AuthContext";
-import { RootDrawerParamList } from "../navigation/type/types";
+import type { RootDrawerParamList, MainStackParamList } from "../navigation/type/types";
 
 export default function CustomDrawerContent(props: DrawerContentComponentProps) {
     const { signOut } = useAuth();
@@ -17,12 +17,15 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
     type Nav = DrawerNavigationProp<RootDrawerParamList, "MainStack">;
     const nav = props.navigation as unknown as Nav;
 
-    const go = (screen: any, params?: any) => {
-        nav.navigate("MainStack", { screen, params });
+    type MainStackScreen = keyof MainStackParamList;
+
+    const go = (screen: MainStackScreen, params?: MainStackParamList[MainStackScreen]) => {
+        nav.navigate("MainStack", { screen, params } as any);
         nav.closeDrawer();
     };
 
     const handleLogout = async () => {
+        // Navigate to Profile first (while drawer is still mounted), then sign out.
         nav.closeDrawer();
         nav.navigate("MainStack", { screen: "Profile" });
         await signOut();
@@ -43,7 +46,7 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
                     </View>
 
                     <View style={styles.badge}>
-                        <Text style={styles.badgeText}>v1</Text>
+                        <Text style={styles.badgeText}>v2</Text>
                     </View>
                 </View>
             </View>
@@ -75,7 +78,7 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
                         icon={({ size, color }) => (
                             <AntDesign name="profile" size={size} color={color} />
                         )}
-                        onPress={() => go("Details", { from: "drawer" })}
+                        onPress={() => go("Details", { from: "drawer" } as any)}
                         inactiveTintColor="#6B7280"
                         activeTintColor="#111827"
                         inactiveBackgroundColor="transparent"
@@ -106,7 +109,7 @@ export default function CustomDrawerContent(props: DrawerContentComponentProps) 
                     activeOpacity={0.9}
                     style={styles.logoutBtn}
                 >
-                    <AntDesign name="logout" size={16} color="#7F1D1D" />
+                    <AntDesign name="logout" size={16} color="#111827" />
                     <Text style={styles.logoutText}>Cerrar sesión</Text>
                 </TouchableOpacity>
 
@@ -125,7 +128,7 @@ const styles = StyleSheet.create({
         paddingBottom: 14,
         borderBottomWidth: 1,
         borderBottomColor: "#E5E7EB",
-        backgroundColor: "#FAFAFA",
+        backgroundColor: "#FFFFFF",
     },
 
     brandRow: {
@@ -133,6 +136,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         gap: 12,
     },
+
     name: {
         fontSize: 16,
         fontWeight: "900",
@@ -155,10 +159,11 @@ const styles = StyleSheet.create({
         borderColor: "#E5E7EB",
         backgroundColor: "#FFFFFF",
     },
+
     badgeText: {
         fontSize: 12,
         fontWeight: "800",
-        color: "#374151",
+        color: "#111827",
     },
 
     items: {
@@ -204,16 +209,16 @@ const styles = StyleSheet.create({
         height: 46,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: "#FCA5A5",
+        borderColor: "#E5E7EB",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#FEF2F2",
+        backgroundColor: "#FFFFFF",
         flexDirection: "row",
         gap: 10,
     },
 
     logoutText: {
-        color: "#7F1D1D",
+        color: "#111827",
         fontSize: 14,
         fontWeight: "900",
     },
