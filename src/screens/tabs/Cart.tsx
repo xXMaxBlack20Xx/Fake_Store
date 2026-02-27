@@ -7,7 +7,7 @@ import { useAuth } from "../auth/AuthContext";
 
 export default function Cart() {
     const { items, totalPrice, setQty, removeItem, clear } = useCart();
-    const { isAuthed } = useAuth();
+    const { isAuthenticated } = useAuth();
 
     if (items.length === 0) {
         return (
@@ -85,7 +85,7 @@ export default function Cart() {
 
                     <Pressable
                         onPress={() => {
-                            if (!isAuthed) navigation.navigate("Login");
+                            if (!isAuthenticated) navigation.navigate("Login");
                             else navigation.navigate("Checkout");
                         }}
                         style={styles.checkoutBtn}
