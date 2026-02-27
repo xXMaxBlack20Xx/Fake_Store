@@ -4,11 +4,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useAuth } from "../auth/AuthContext";
 import { HttpError } from "../../api";
 
-export default function Login() {
-    const { signIn } = useAuth();
+export default function Profile() {
+    const { signIn, signOut, isAuthenticated } = useAuth();
 
-    const [username, setUsername] = useState("mor_2314");
-    const [password, setPassword] = useState("83r5^_");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
@@ -24,6 +24,20 @@ export default function Login() {
             setLoading(false);
         }
     };
+
+    if (isAuthenticated) {
+        return (
+            <SafeAreaView style={styles.safe}>
+                <View style={styles.container}>
+                    <Text style={styles.title}>Perfil</Text>
+
+                    <Pressable onPress={signOut} style={styles.btn}>
+                        <Text style={styles.btnText}>Cerrar sesión</Text>
+                    </Pressable>
+                </View>
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={styles.safe}>
@@ -54,7 +68,6 @@ export default function Login() {
         </SafeAreaView>
     );
 }
-
 const styles = StyleSheet.create({
     safe: { flex: 1, backgroundColor: "#fff" },
     container: { flex: 1, padding: 20, gap: 12, justifyContent: "center" },

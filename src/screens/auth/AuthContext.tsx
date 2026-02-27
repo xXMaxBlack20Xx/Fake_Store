@@ -1,10 +1,12 @@
+// src/auth/AuthContext.tsx
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { authApi, HttpError } from "../../api";
+import { login as apiLogin, logout as apiLogout, getStoredToken } from "../../api/auth/auth";
+import type { LoginRequest } from "../../api/types/loginTypes";
 
 type AuthContextValue = {
     token: string | null;
-    isLoading: boolean;
-    isAuthed: boolean;
+    isAuthenticated: boolean;
+    restoring: boolean;
     signIn: (username: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
 };
@@ -13,35 +15,46 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [token, setToken] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
+    const [restoring, setRestoring] = useState(true);
 
     useEffect(() => {
         (async () => {
-            const t = await authApi.getStoredToken();
-            setToken(t);
-            setIsLoading(false);
+            try {
+                const t = await getStoredToken();
+                setToken(t);
+            } finally {
+                setRestoring(false);
+            }
         })();
     }, []);
 
-    const value = useMemo<AuthContextValue>(() => ({
-        token,
-        isLoading,
-        isAuthed: !!token,
-        signIn: async (username, password) => {
-            const res = await authApi.login({ username, password });
-            setToken(res.token);
-        },
-        signOut: async () => {
-            await authApi.logout();
-            setToken(null);
-        },
-    }), [token, isLoading]);
+    const signIn = async (username: string, password: string) => {
+        const payload: LoginRequest = { username, password };
+        const res = await apiLogin(payload); // this saves token in SecureStore already
+        setToken(res.token);                 // this updates app state immediately
+    };
+
+    const signOut = async () => {
+        await apiLogout();
+        setToken(null);
+    };
+
+    const value = useMemo(
+        () => ({
+            token,
+            restoring,
+            isAuthenticated: !!token,
+            signIn,
+            signOut,
+        }),
+        [token, restoring]
+    );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
     const ctx = useContext(AuthContext);
-    if (!ctx) throw new Error("useAuth must be used within <AuthProvider />");
+    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
     return ctx;
 }

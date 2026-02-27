@@ -19,15 +19,15 @@ export default function Details({ navigation, route }: Props) {
             <StatusBar barStyle="dark-content" />
 
             <View style={styles.container}>
-                <Text style={styles.kicker}>MIAPP_V2</Text>
-                <Text style={styles.title}>Detalles</Text>
+                <Text style={styles.kicker}>TAREA DE PROGRAMACIÓN</Text>
+                <Text style={styles.title}>FakeStore API</Text>
 
                 {/* Card principal */}
                 <View style={styles.card}>
-                    <Text style={styles.cardTitle}>Información</Text>
+                    <Text style={styles.cardTitle}>DETALLES DEL PROYECTO</Text>
                     <Text style={styles.cardText}>
-                        Aquí puedes mostrar datos dinámicos, parámetros de navegación
-                        o contenido detallado relacionado a un elemento.
+                        Esta pantalla forma parte de mi práctica escolar. Aquí se mostrarán
+                        los productos obtenidos de la API de FakeStore de manera dinámica.
                     </Text>
                 </View>
 
@@ -36,7 +36,7 @@ export default function Details({ navigation, route }: Props) {
                     onPress={() => navigation.goBack()}
                     style={styles.secondaryBtn}
                 >
-                    <Text style={styles.secondaryText}>Volver</Text>
+                    <Text style={styles.secondaryText}>Regresar</Text>
                 </Pressable>
             </View>
         </SafeAreaView>
@@ -64,13 +64,7 @@ const styles = StyleSheet.create({
         fontWeight: "900",
         color: "#111827",
         lineHeight: 40,
-    },
-    subtitle: {
-        marginTop: 10,
-        fontSize: 14,
-        color: "#4B5563",
-        lineHeight: 20,
-        marginBottom: 18,
+        marginBottom: 20,
     },
     card: {
         borderWidth: 1,
@@ -78,7 +72,7 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 16,
         marginBottom: 14,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#F9FAFB",
     },
     cardTitle: {
         fontSize: 12,
@@ -97,14 +91,14 @@ const styles = StyleSheet.create({
         height: 50,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: "#E5E7EB",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#191919",
+        marginTop: 10,
     },
     secondaryText: {
         fontSize: 14,
         fontWeight: "900",
-        color: "#111827",
+        color: "#f9f9fa",
     },
 });

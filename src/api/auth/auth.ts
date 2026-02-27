@@ -1,6 +1,6 @@
-import { request } from "./https";
-import type { LoginRequest, LoginResponse } from "./types/loginTypes";
-import { saveToken, deleteToken, getToken } from "./tokenStore";
+import { request } from "../https";
+import type { LoginRequest, LoginResponse } from "../types/loginTypes";
+import { saveToken, deleteToken, getToken } from "../tokenStore";
 
 export async function login(payload: LoginRequest): Promise<LoginResponse> {
     const res = await request<LoginResponse>("/auth/login", {
